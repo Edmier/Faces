@@ -16,15 +16,13 @@
 		<p class="text-lg font-sans">A short game about the ethics of facial recognition</p>
 
 		<div>
-			<input type="text" name="name" bind:value={lobbyID} placeholder="Lobby ID" >
-			<a href="/play/{lobbyID || 'guest'}">Start</a>
+			<input class="bg-gray-200 p-4 rounded-md" type="text" name="name" bind:value={lobbyID} placeholder="Lobby ID" >
+			<a class="bg-gray-200 p-4 rounded-md" href="/game/{lobbyID || 'guest'}/join">Start</a>
 		</div>
 		
-		<a href="/play/guest">No ID? Contine as Guest</a>
+		<a href="/game/guest/join" class="underline">No ID? Contine as Guest</a>
 
-		<p class="text-sm font-sans">Made by <a href="https://kameron.edmier.com" target="_blank">Kameron Edmier for CSE 262 - 2023</a></p>
+		<p class="text-sm font-sans mt-32">Made by <a href="https://kameron.edmier.com" target="_blank">Kameron Edmier for CSE 262 - 2023</a></p>
 	</section>
 </main>
 
-
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>

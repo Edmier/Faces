@@ -1,20 +1,21 @@
-import { fail } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
-import { GetLobby } from '$pb/pocketbase';
-
-export const load: PageServerLoad = async ({ locals, params, parent }) => {
-	await parent();
-};
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
+import { GetLobby, type Lobby } from '$pb/pocketbase';
 
 export const actions: Actions = {
-	join: async ({ locals, request, params, cookies }) => {
+	default: async ({ locals, request, params, cookies }) => {
 		if (!locals.pb) {
 			return fail(500, { error: 'PocketBase not initialized!' })
 		}
 
 		const { id } = params;
 
-		const lobby = await GetLobby(locals.pb, id);
+		let lobby: Lobby | null;
+		try {
+			lobby = await GetLobby(locals.pb, id);
+		} catch (_) {
+			return fail(404, { error: 'Lobby not found' });
+		}
 		if (!lobby) {
 			return fail(404, { error: 'Lobby not found' });
 		}
@@ -65,37 +66,13 @@ export const actions: Actions = {
 			return fail(401, { error: 'Incorrect username or password!' });
 		}
 
-		const cookie = locals.pb.authStore.exportToCookie();
-		// Split apart the cookie string in order to set the cookie
-		const cookieParts = cookie.split(';');
-		const cookieName = cookieParts[0].split('=')[0];
-		const cookieValue = cookieParts[0].split('=')[1];
-		// const cookieOptions = cookieParts.slice(1).join(';');
+		if (locals.pb.authStore.token) {
+			cookies.set('pb_token', locals.pb.authStore.token, {
+				path: '/',
+				maxAge: 604800,
+			});
+		}
 
-		cookies.set(cookieName, cookieValue, {
-			path: '/',
-		});
+		throw redirect(302, `/game/${id}/play`);
 	},
-	newgame: async ({ locals, params }) => {
-		if (!locals.pb) {
-			return fail(500, { error: 'PocketBase not initialized!' })
-		}
-		const { id } = params;
-
-		const lobby = await GetLobby(locals.pb, id);
-		if (!lobby) {
-			return fail(404, { error: 'Lobby not found' })
-		}
-
-		const game = await locals.pb.collection('games').create({
-			lobbyId: lobby.lobbyId,
-			players: [],
-			rounds: [],
-		});
-
-		return {
-			status: 200,
-			body: game,
-		};
-	}
 };

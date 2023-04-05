@@ -6,6 +6,6 @@
 </script>
 
 
-<Header lobbyName={data.name} />
+<Header lobbyName={data.lobby?.name ?? ''} />
 
 <slot />

@@ -6,18 +6,21 @@ import PocketBase from 'pocketbase';
 export const handle: Handle = async ({ event, resolve }) => {
 	const { locals, cookies } = event;
 
-	const pbCookie = cookies.get('pocketbase_auth');
+	const pbTokenCookie = cookies.get('pb_token');
 
 	locals.pb = new PocketBase(POCKETBASE_URL);
-	locals.pb.authStore.loadFromCookie(pbCookie || '');
+	locals.pb.authStore.save(pbTokenCookie || '', null);
 
 	try {
-		if (locals.pb.authStore.isValid) {
-			await locals.pb.collection('users').authRefresh();
-		}
+		locals.pb.authStore.isValid && await locals.pb.collection('users').authRefresh();
 	} catch (_) {
 		locals.pb.authStore.clear();
 	}
+
+	cookies.set('pb_token', locals.pb.authStore.token, {
+		path: '/',
+		maxAge: 604800,
+	});
 
 	// Security headers
 	event.setHeaders({
@@ -27,11 +30,5 @@ export const handle: Handle = async ({ event, resolve }) => {
 		'X-Content-Type-Options': 'nosniff'
 	});
 
-	const response = await resolve(event);
-
-	if (locals.pb) {
-		response.headers.append('set-cookie', locals.pb.authStore.exportToCookie());
-	}
-
-	return response
+	return await resolve(event);
 };

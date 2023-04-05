@@ -9,8 +9,10 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 
 	if (id === 'guest') {
 		return {
-			name: 'Guest Lobby',
-			lobbyId: 'guest',
+			lobby: {
+				name: 'Guest Lobby',
+				lobbyId: 'guest',
+			}
 		};
 	}
 
@@ -18,11 +20,18 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 		locals.pb = new PocketBase(POCKETBASE_URL);
 	}
 
-	const lobby = await GetLobby(locals.pb, id);
+	try {
+		const lobby = await GetLobby(locals.pb, id);
 
-	if (!lobby) {
+		if (!lobby) {
+			throw error(404, 'Lobby not found');
+		}
+
+		return {
+			lobby: structuredClone(lobby) as Lobby
+		};
+
+	} catch (_) {
 		throw error(404, 'Lobby not found');
 	}
-
-	return structuredClone(lobby) as Lobby;
 };
