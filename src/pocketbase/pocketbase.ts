@@ -12,7 +12,15 @@ export function GetLobby(pb: PocketBase, lobbyId: string) {
 	return lobby;
 }
 
+export interface User {
+	id: string;
+	username: string;
+	lobbyId: string;
+	game: Game;
+}
+
 export interface Lobby {
+	id: string;
 	lobbyId: string;
 	name: string;
 	created: string;
@@ -28,12 +36,33 @@ export interface Game {
 	coins: number;
 	startTime: string;
 	status: 'new' | 'started' | 'finished';
+	data: GameData;
 }
 
 export interface Choice {
 	timestamp: string;
-	choice: 'admit' | 'deny';
+	choice: 'admit' | 'deny' | 'report';
 	coinChange: number;
-	face: string;
+	person: string;
 	warrented: boolean;
+}
+
+export interface GameData {
+	wanted: WantedData[];
+	waiting: WaitingData[];
+}
+
+export interface WantedData {
+	seed: string;
+	createdAt: number;
+	crime: string;
+	face: string;
+	guilty: boolean;
+}
+
+export interface WaitingData {
+	seed: string;
+	createdAt: number;
+	isWanted: boolean;
+	netCoins: number;
 }

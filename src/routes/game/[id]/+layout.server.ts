@@ -7,15 +7,6 @@ import { error } from '@sveltejs/kit';
 export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const { id } = params;
 
-	if (id === 'guest') {
-		return {
-			lobby: {
-				name: 'Guest Lobby',
-				lobbyId: 'guest',
-			}
-		};
-	}
-
 	if (!locals.pb) {
 		locals.pb = new PocketBase(POCKETBASE_URL);
 	}
