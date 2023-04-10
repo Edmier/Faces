@@ -1,15 +1,25 @@
+import { CreateLobbyState } from '$lib/game';
+import type { Face } from 'facesjs';
 import type PocketBase from 'pocketbase';
 
-export function GetLobby(pb: PocketBase, lobbyId: string) {
-	const lobby = pb.collection('lobbies').getFirstListItem<Lobby>('', {
-		lobbyId: lobbyId,
-	});
+export async function GetLobby(pb: PocketBase, lobbyId: string) {
+	try {
+		const lobby = await pb.collection('lobbies').getFirstListItem<Lobby>('', {
+			lobbyId: lobbyId,
+		});
 
-	if (!lobby) {
-		return null
+		if (!lobby) {
+			return null;
+		}
+
+		if (!lobby.data) {
+			return await CreateLobbyState(pb, lobby);
+		}
+
+		return lobby;
+	} catch (_) {
+		return null;
 	}
-
-	return lobby;
 }
 
 export interface User {
@@ -25,6 +35,12 @@ export interface Lobby {
 	name: string;
 	created: string;
 	participants: number;
+	data: LobbyData;
+}
+
+export interface LobbyData {
+	wanted: WantedData[];
+	waiting: WaitingData[];
 }
 
 export interface Game {
@@ -40,11 +56,11 @@ export interface Game {
 }
 
 export interface Choice {
-	timestamp: string;
+	timestamp: number;
 	choice: 'admit' | 'deny' | 'report';
 	coinChange: number;
 	person: string;
-	warrented: boolean;
+	warranted: boolean;
 }
 
 export interface GameData {
@@ -53,14 +69,15 @@ export interface GameData {
 }
 
 export interface WantedData {
+	face?: Face,
 	seed: string;
 	createdAt: number;
 	crime: string;
-	face: string;
 	guilty: boolean;
 }
 
 export interface WaitingData {
+	face?: Face,
 	seed: string;
 	createdAt: number;
 	isWanted: boolean;

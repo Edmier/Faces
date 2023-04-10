@@ -32,13 +32,15 @@ export const actions: Actions = {
 			return fail(401, { error: 'Please have username be at least 5 characters' });
 		}
 
-		if (password.length < 8) {
-			return fail(401, { error: 'Please have password be at least 8 characters' });
+		if (password.length < 4) {
+			return fail(401, { error: 'Please have passkey be at least 4 characters' });
 		}
 
 		let authUser = null;
 		try {
-			authUser = await locals.pb.collection('users').authWithPassword(username, password);
+			authUser = await locals.pb.collection('users').authWithPassword(username, password, {}, {
+				expand: 'game'
+			});
 			if (!authUser) {
 				return fail(401, { error: 'Incorrect username or password!' });
 			}
@@ -51,7 +53,9 @@ export const actions: Actions = {
 					lobbyId: lobby.lobbyId,
 				});
 	
-				authUser = await locals.pb.collection('users').authWithPassword(username, password);
+				authUser = await locals.pb.collection('users').authWithPassword(username, password, {}, {
+					expand: 'game'
+				});
 				if (!authUser) {
 					return fail(401, { error: 'Incorrect username or password!' });
 				}

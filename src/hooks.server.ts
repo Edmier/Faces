@@ -12,7 +12,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	locals.pb.authStore.save(pbTokenCookie || '', null);
 
 	try {
-		locals.pb.authStore.isValid && await locals.pb.collection('users').authRefresh();
+		locals.pb.authStore.isValid && await locals.pb.collection('users').authRefresh({}, {
+			expand: 'game',
+		});
 	} catch (_) {
 		locals.pb.authStore.clear();
 	}

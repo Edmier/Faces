@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { Generator } from "$lib/random";
+	import type { WantedData } from '$pb/pocketbase';
+	import Face from './face.svelte';
 
-	export let seed: string;
-	export let spawnTime: number;
-
-	const gen = new Generator(seed, spawnTime);
-	const crime = gen.crime();
+	export let data: WantedData;
 </script>
 
-<p>{crime}</p>
+<section class="block max-w-sm p-4 -pt-4 shadow-xl">
+	<div class="flex flex-row">
+		<div class="object-contain h-full block flex-1">
+			<Face face={data.face ?? null} />
+		</div>
+		<div class="p-4 flex-1">
+			<h3 class="text-lg font-bold">WANTED</h3>
+			<p>{data.crime}</p>
+		</div>
+	</div>
+</section>

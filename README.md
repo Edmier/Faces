@@ -1,6 +1,11 @@
-# create-svelte
+# The Ethics of Facial Recognition
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A demo game that explores the ethics of facial recognition technology.
+
+Uses [facesjs](https://github.com/zengm-games/facesjs) to generate faces.
+
+Still a work in progress.
+
 
 ## Creating a project
 

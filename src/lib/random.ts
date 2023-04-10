@@ -6,11 +6,12 @@ export class Generator {
     seed: string;
     seeds: number[];
     crime: () => string;
-    wanted: (index: number) => WantedData;
-    waiting: (index: number) => WaitingData;
+    wanted: (index?: number) => WantedData;
+    waiting: (index?: number) => WaitingData;
     wantedWaiting: (wanted: WantedData) => WaitingData;
+    facePointOffsets: () => { x: number, y: number }[];
 
-    constructor(seed: string, time = Date.now()) {
+    constructor(seed: string, time = '') {
         this.baseSeed = seed;
         this.seed = seed + time.toString();
         this.seeds = cyrb128(time.toString() + seed);
@@ -22,11 +23,10 @@ export class Generator {
         }
 
         this.wanted = (index = 0) => {
-            const gen = new SeededRandom(this.seed);
+            const gen = new Generator(this.seed, index ? index.toString() : undefined);
 
-            const crime = this.crime();
-            const face = gen.nextRange(0, 100).toString();
-            const guilty = gen.nextRange(0, 10) > 1;
+            const crime = gen.crime();
+            const guilty = true;
 
             const createdAt = time + index.toString();
 
@@ -34,7 +34,6 @@ export class Generator {
                 seed: this.baseSeed + createdAt.toString(),
                 createdAt: +createdAt,
                 crime,
-                face,
                 guilty,
             };
         }
@@ -61,6 +60,20 @@ export class Generator {
                 netCoins: -gen.nextRange(25, 150),
             };
         }
+
+        this.facePointOffsets = () => {
+            const gen = new SeededRandom(this.seed);
+            const points = [];
+
+            for (let i = 0; i < 5; i++) {
+                points.push({
+                    x: gen.nextRange(-3, 3),
+                    y: gen.nextRange(-3, 3),
+                });
+            }
+
+            return points;
+        }
     }
 }
 
@@ -76,7 +89,7 @@ export class SeededRandom {
 	}
 
 	nextRange(min: number, max: number) {
-        return Math.floor(this.next() * (max - min + 1)) + min;
+        return Math.floor(this.next() * (max - min) + min);
     }
 }
 
