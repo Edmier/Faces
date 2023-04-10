@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
+	import Face from "../play/face.svelte";
+	import Waiting from "../play/waiting.svelte";
+import type { PageData } from "./$types";
 
 	export let data: PageData;
 
@@ -15,28 +17,40 @@
 <main class="flex flex-col items-center">
 	<h1 class="text-2xl my-16">Results</h1>
 
-	{#each allowed as admitted}
-		<div class="flex flex-row gap-2">
-			<div class="flex flex-col gap-2">
-				<p class="text-lg">Admitted</p>
-			</div>
-		</div>
-	{/each}
+	<p>Admitted <span class="text-green-400">{allowed.length}</span></p>
+	<p>Denied <span class="text-red-400">{denied.length}</span></p>
+	<p>Reported <span class="text-yellow-400">{reported.length}</span></p>
 
-	{#each denied as denied}
-		<div class="flex flex-row gap-2">
-			<div class="flex flex-col gap-2">
-				<p class="text-lg">Denied</p>
-			</div>
-		</div>
-	{/each}
+	<form method="post" action="?/logout">
+		<button class="p-4 px-8 bg-gray-200 rounded-md">Logout</button>
+	</form>
 
-	{#each reported as reported}
+	<section>
+		<h2 class="text-xl">Reported People</h2>
 		<div class="flex flex-row gap-2">
-			<div class="flex flex-col gap-2">
-				<p class="text-lg">Reported</p>
-			</div>
+			{#each reported as person}
+				<div class="flex flex-col items-center">
+					<Waiting data={waiting.find(w => w.seed === person.person)} />
+						{#if person.warranted}
+							<p class="text-green-400">Blocked a criminal!</p>
+						{:else}
+							<p class="text-red-400">Blocked an innocent!</p>
+						{/if}
+				</div>
+			{/each}
 		</div>
-	{/each}
+	</section>
+
+	<section>
+		<h2 class="text-xl">Actual Wanted People</h2>
+		<div class="flex flex-row gap-2">
+			{#each wanted as person}
+				<div class="flex flex-col items-center">
+					<Waiting data={waiting.find(w => w.seed === person.seed)} />
+					<!-- <p>{person.guilty}</p> -->
+				</div>
+			{/each}
+		</div>
+	</section>
 </main>
 

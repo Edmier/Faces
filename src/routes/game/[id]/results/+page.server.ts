@@ -1,5 +1,5 @@
 import type { Game } from "$pb/pocketbase";
-import { error, redirect } from "@sveltejs/kit";
+import { error, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
@@ -18,3 +18,11 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 		game: structuredClone(game) as Game,
 	}
 };
+
+export const actions: Actions = {
+	async logout({ cookies }) {
+		cookies.delete("pb_token");
+
+		throw redirect(303, "/");
+	}
+}

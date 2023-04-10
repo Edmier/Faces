@@ -80,6 +80,6 @@ export interface WaitingData {
 	face?: Face,
 	seed: string;
 	createdAt: number;
-	isWanted: boolean;
+	guilty: boolean;
 	netCoins: number;
 }

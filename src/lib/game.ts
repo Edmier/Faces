@@ -62,7 +62,7 @@ export function InitialGameState(lobby: Lobby): GameData {
 		}
 
 		obj.face = generate(overrides);
-		obj.isWanted = true;
+		obj.guilty = true;
 		waiting.push(obj);
 	}
 

@@ -45,7 +45,7 @@ export class Generator {
             return {
                 seed: this.baseSeed + createdAt.toString(),
                 createdAt: +createdAt,
-                isWanted: false,
+                guilty: false,
                 netCoins: gen.nextRange(0, 100) - 50,
             };
         }
@@ -56,7 +56,7 @@ export class Generator {
             return {
                 seed: wanted.seed,
                 createdAt: wanted.createdAt,
-                isWanted: true,
+                guilty: true,
                 netCoins: -gen.nextRange(25, 150),
             };
         }
