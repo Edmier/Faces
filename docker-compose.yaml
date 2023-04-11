@@ -5,6 +5,7 @@ services:
             - .env
         environment:
             - NODE_ENV=production
+            - ORIGIN=http://localhost
         build: .
         ports:
             - 9098:3000
