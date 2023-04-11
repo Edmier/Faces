@@ -1,6 +1,7 @@
+import { PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD, POCKETBASE_URL } from '$env/static/private';
 import { CreateLobbyState } from '$lib/game';
 import type { Face } from 'facesjs';
-import type PocketBase from 'pocketbase';
+import PocketBase from 'pocketbase';
 
 export async function GetLobby(pb: PocketBase, lobbyId: string) {
 	try {
@@ -17,6 +18,22 @@ export async function GetLobby(pb: PocketBase, lobbyId: string) {
 		}
 
 		return lobby;
+	} catch (_) {
+		return null;
+	}
+}
+
+export async function GetGame(pb: PocketBase, gameId: string) {
+	try {
+		const game = await pb.collection('games').getOne<Game>(gameId, {
+			gameId: gameId,
+		});
+
+		if (!game) {
+			return null;
+		}
+
+		return game;
 	} catch (_) {
 		return null;
 	}

@@ -77,7 +77,7 @@ export function InitialGameState(lobby: Lobby): GameData {
 		[waiting[i], waiting[j]] = [waiting[j], waiting[i]];
 	}
 
-	console.log(wanted);
+	// console.log(wanted);
 
 	return {
 		wanted,
@@ -86,7 +86,7 @@ export function InitialGameState(lobby: Lobby): GameData {
 }
 
 export async function CreateLobbyState(pb: PocketBase, lobby: Lobby): Promise<Lobby> {
-	console.log("Creating lobby state");
+	// console.log("Creating lobby state");
 	const state = InitialGameState(lobby);
 
 	try {

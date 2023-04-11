@@ -18,14 +18,8 @@
 	const wanted = data.lobby.data.wanted;
 	const lobbyData = data.lobby.data;
 
-	let waitingIndex = form?.nextChoice ?? data.nextChoice ?? 0;
-	let currentlyWaiting = data.lobby.data?.waiting?.[waitingIndex];
-
-	function select() {
-		waitingIndex = waitingIndex + 1;
-		currentlyWaiting = data.lobby.data.waiting[waitingIndex];
-		console.log("select", currentlyWaiting);
-	}
+	$: waitingIndex = form?.nextChoice ?? data.nextChoice ?? 0;
+	$: currentlyWaiting = data.lobby.data?.waiting?.[waitingIndex];
 </script>
 
 <svelte:head>
@@ -57,21 +51,21 @@
 				{/if}
 			{/each}
 		</div>
-		<form class="w-full" method="post" on:submit={select} use:enhance>
-			<div class="flex flex-col items-center gap-2">
+		<form class="w-full" method="post" use:enhance>
+			<div class="flex flex-row items-center gap-2 h-24">
 				<input type="text" bind:value={currentlyWaiting.seed} name="waitingIndex" hidden>
-				<button class="flex-1 w-1/2 p-2 bg-green-400 rounded-md" type="submit" formaction="?/allow">Allow</button>
-				<button class="flex-1 w-1/2 p-2 bg-red-400 rounded-md" type="submit" formaction="?/deny">Deny</button>
-				<button class="flex-1 w-1/2 p-2 bg-red-600 rounded-md" type="submit" formaction="?/report">Report</button>
+				<button class="flex-1 h-full w-full p-2 bg-green-400 rounded-md" type="submit" formaction="?/allow">Allow</button>
+				<button class="flex-1 h-full w-full p-2 bg-red-400 rounded-md" type="submit" formaction="?/deny">Deny</button>
+				<button class="flex-1 h-full w-full p-2 bg-red-600 rounded-md" type="submit" formaction="?/report">Report</button>
 			</div>
 		</form>
-		<p>{data.game.coins}</p>
+		<!-- <p>{data.game.coins}</p> -->
 		{#if !form?.success}
-			<p>{form?.error}</p>
+			<p>{form?.error ?? ''}</p>
 		{/if}
 	</section>
 </main>
 
-<pre class="mt-32">{JSON.stringify(data.user, undefined, 4)}</pre>
+<!-- <pre class="mt-32">{JSON.stringify(data.user, undefined, 4)}</pre>
 
-<pre>{JSON.stringify(data.game, undefined, 4)}</pre>
+<pre>{JSON.stringify(data.game, undefined, 4)}</pre> -->

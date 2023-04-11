@@ -22,7 +22,7 @@ export const actions: Actions = {
 
 		const form = await request.formData();
 		const username = form.get('name') as string;
-		const password = form.get('password') as string;
+		const password = (form.get('password') ?? crypto.randomUUID()) as string;
 
 		if (!username || !password) {
 			return fail(400, { error: 'Missing username or password' });
@@ -32,15 +32,10 @@ export const actions: Actions = {
 			return fail(401, { error: 'Please have username be at least 5 characters' });
 		}
 
-		if (password.length < 4) {
-			return fail(401, { error: 'Please have passkey be at least 4 characters' });
-		}
-
 		let authUser = null;
 		try {
-			authUser = await locals.pb.collection('users').authWithPassword(username, password, {}, {
-				expand: 'game'
-			});
+			authUser = await locals.pb.collection('users').authWithPassword(username, password, {});
+
 			if (!authUser) {
 				return fail(401, { error: 'Incorrect username or password!' });
 			}
@@ -56,14 +51,25 @@ export const actions: Actions = {
 				authUser = await locals.pb.collection('users').authWithPassword(username, password, {}, {
 					expand: 'game'
 				});
+
 				if (!authUser) {
 					return fail(401, { error: 'Incorrect username or password!' });
 				}
 			} catch (e) {
+				console.error(e);
 				return fail(401, { error: 'Something went wrong while creating a new user!' });
 			}
 
-			return fail(401, { error: 'Something went wrong while creating a new user!' });
+			if (authUser) {
+				cookies.set('pb_token', locals.pb.authStore.token, {
+					path: '/',
+					maxAge: 604800,
+				});
+				
+				throw redirect(302, `/game/${id}/play`);
+			} else {
+				return fail(401, { error: 'Incorrect username or password!' });
+			}
 		}
 
 		if (!authUser) {
