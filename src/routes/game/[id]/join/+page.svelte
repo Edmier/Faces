@@ -26,6 +26,5 @@
 		</form>
 
 		<p class="md:w-[50%] text-sm mt-16">Feel free to use an insecure passkey and save it in your browser, it's only used to resume your progress and there's no personal data attached.</p>
-		<p class="text-sm font-sans">Made by <a href="https://kameron.edmier.com" target="_blank">Kameron Edmier for CSE 262 - 2023</a></p>
 	</section>
 </main>

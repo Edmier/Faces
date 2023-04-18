@@ -20,9 +20,7 @@
 			<a class="bg-gray-200 p-4 rounded-md" href="/game/{lobbyID || 'guest'}/join">Start</a>
 		</div>
 		
-		<a href="/game/guest/join" class="underline">No ID? Contine as Guest</a>
-
-		<p class="text-sm font-sans mt-32">Made by <a href="https://kameron.edmier.com" target="_blank">Kameron Edmier for CSE 262 - 2023</a></p>
+		<a href="/game/guest/join" class="underline">No ID? Continue as Guest</a>
 	</section>
 </main>
 

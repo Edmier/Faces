@@ -1,6 +1,6 @@
 import { error, type Actions, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { GetLobby, type Game, type Lobby, type User, GetGame } from '$pb/pocketbase';
+import { GetLobby, type Game, type Lobby, type User, GetGame, type Choice, type GameData } from '$pb/pocketbase';
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
 	const { lobby } = await parent();
@@ -52,6 +52,7 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	game = await GetGame(locals.pb, user.game);
 	if (game) {
 		if (game.status === 'finished') {
+			collectData(game.choices);
 			throw redirect(303, `/game/${lobby.lobbyId}/results`);
 		}
 
@@ -149,13 +150,15 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 		choices = [];
 	}
 
-	choices.push({
-		choice: choice,
-		coinChange: waiting.netCoins,
-		warranted: waiting.guilty,
-		person: waiting.seed,
-		timestamp: Date.now(),
-	});
+	if (!choices.some((c) => c.person === waiting.seed)) {
+		choices.push({
+			choice: choice,
+			coinChange: waiting.netCoins,
+			warranted: waiting.guilty,
+			person: waiting.seed,
+			timestamp: Date.now(),
+		});
+	}
 
 	// console.log(choices.length, lobby.data.waiting.length, choices.length >= lobby.data.waiting.length);
 	const done = choices.length >= lobby.data.waiting.length - 1;
@@ -177,4 +180,35 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 		// console.log(e);
 		return fail(500, { success: false, error: 'Error updating game! Try logging in again' });
 	}
+}
+
+async function collectData(choices: Choice[]): Promise<GameData> {
+	const data: GameData = {
+		deny: 0,
+		admit: 0,
+		report: 0,
+		wanted: {
+			deny: 0,
+			admit: 0,
+			report: 0,
+		},
+		blockedWanted: []
+	};
+
+	if (!choices || !Array.isArray(choices)) return data;
+
+	for (const choice of choices) {
+		if (choice.warranted) {
+			data.wanted[choice.choice]++;
+
+			if (choice.choice === 'report' || choice.choice === 'deny') {
+				data.blockedWanted.push(choice.person);
+			}
+		} else {
+			data[choice.choice]++;
+		}
+	}
+
+	console.log(data);
+	return data;
 }

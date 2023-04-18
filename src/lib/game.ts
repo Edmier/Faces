@@ -1,4 +1,4 @@
-import type { Lobby, GameData, WantedData, WaitingData } from "$pb/pocketbase";
+import type { Lobby, WantedData, WaitingData, LobbyData } from "$pb/pocketbase";
 import { Generator } from "./random";
 import PocketBase from "pocketbase";
 import { generate, type Face } from "facesjs";
@@ -13,7 +13,7 @@ type Overrides = {
 	[key in keyof Face]?: Face[key];
 }
 
-export function InitialGameState(lobby: Lobby): GameData {
+export function InitialGameState(lobby: Lobby): LobbyData {
 	const lobbySeed = lobby.id;
 	const wanted: WantedData[] = [];
 	const waiting: WaitingData[] = [];
@@ -22,7 +22,7 @@ export function InitialGameState(lobby: Lobby): GameData {
 
 	// Yes I know how bad this looks, but I want the representation to be equal and this is the only way
 	// to do that with the faces library
-	const races = ['white', 'white', 'black', 'asian', 'brown', 'brown'];
+	const races = ['white', 'white', 'asian', 'asian', 'brown', 'black'];
 
 	for (let i = 0; i < INITIAL_WANTED; i++) {
 		const obj = gen.wanted(i);

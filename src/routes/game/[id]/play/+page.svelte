@@ -26,16 +26,16 @@
 	<title>Faces Game</title>
 </svelte:head>
 
-<main class="flex flex-row">
-	<section class="flex-1">
-		<h1>Wanted People</h1>
-		<div class="flex flex-row gap-2 m-2">
-			<div class="flex flex-col gap-2">
+<main class="flex flex-col md:flex-row">
+	<section class="flex-1 flex flex-col items-center">
+		<h1 class="my-1 md:my-4 text-xl md:text-2xl">Wanted People</h1>
+		<div class="flex flex-col md:flex-row gap-2 mx-2">
+			<div class="flex flex-row md:flex-col gap-2">
 				{#each wanted.slice(0, wanted.length / 2) as person}
 					<Wanted data={person} />
 				{/each}
 			</div>
-			<div class="flex flex-col gap-2">
+			<div class="flex flex-row md:flex-col gap-2">
 				{#each wanted.slice(wanted.length / 2) as person}
 					<Wanted data={person} />
 				{/each}
@@ -43,8 +43,8 @@
 		</div>
 	</section>
 	<section class="flex-1 flex flex-col items-center">
-		<h1 class="my-16 text-2xl">Currently Waiting</h1>
-		<div class="flex flex-col gap-2 m-2">
+		<h1 class="my-1 md:my-4 text-xl md:text-2xl">Currently Waiting</h1>
+		<div class="flex flex-col gap-2 m-2 max-w-[50vw]">
 			{#each data.lobby.data.waiting as person, i}
 				{#if i === waitingIndex}
 					<Waiting data={person} />
@@ -52,7 +52,7 @@
 			{/each}
 		</div>
 		<form class="w-full" method="post" use:enhance>
-			<div class="flex flex-row items-center gap-2 h-24">
+			<div class="flex flex-row items-center gap-2 h-16 md:h-24 mx-2">
 				<input type="text" bind:value={currentlyWaiting.seed} name="waitingIndex" hidden>
 				<button class="flex-1 h-full w-full p-2 bg-green-400 rounded-md" type="submit" formaction="?/allow">Allow</button>
 				<button class="flex-1 h-full w-full p-2 bg-red-400 rounded-md" type="submit" formaction="?/deny">Deny</button>

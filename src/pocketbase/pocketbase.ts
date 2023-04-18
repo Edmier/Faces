@@ -81,8 +81,15 @@ export interface Choice {
 }
 
 export interface GameData {
-	wanted: WantedData[];
-	waiting: WaitingData[];
+	deny: number;
+	admit: number;
+	report: number;
+	wanted: {
+		deny: number;
+		admit: number;
+		report: number;
+	}
+	blockedWanted: string[]
 }
 
 export interface WantedData {

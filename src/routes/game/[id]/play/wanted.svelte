@@ -10,7 +10,7 @@
 		<div class="object-contain h-full block flex-1">
 			<Face face={data.face ?? null} />
 		</div>
-		<div class="p-4 flex-1">
+		<div class="p-4 flex-1 hidden md:block">
 			<h3 class="text-lg font-bold">WANTED</h3>
 			<p>{data.crime}</p>
 		</div>

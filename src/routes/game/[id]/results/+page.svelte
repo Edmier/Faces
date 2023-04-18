@@ -19,7 +19,7 @@
 	<title>Results</title>
 </svelte:head>
 
-<main class="flex flex-col items-center gap-4">
+<main class="flex flex-col items-center gap-4 mx-2">
 	<h1 class="text-2xl my-16">Results</h1>
 
 	<h3 class="text-xl">You allowed <span class="text-green-400">{allowed.length}</span> people, <span class="text-red-600">{allowed.filter(r => wanted.some(w => w.seed === r.person)).length}</span> of which were wanted criminals!</h3>
