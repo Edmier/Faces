@@ -31,6 +31,11 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 		const gender = (i % 2 === 0) ? 'male' : 'female';
 
 		obj.face = generate(undefined, { gender, race: races[i] as unknown as undefined });
+
+		if (wanted.some(w => w.seed === obj.seed)) {
+			obj.seed += i * 7;
+		}
+
 		wanted.push(obj);
 	}
 
@@ -38,6 +43,11 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 		const obj = gen.waiting(i);
 		const gender = (i % 2 === 0) ? 'male' : 'female';
 		obj.face = generate(undefined, { gender,  });
+
+		if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
+			obj.seed += i * 7;
+		}
+
 		waiting.push(obj);
 	}
 
@@ -63,6 +73,11 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 
 		obj.face = generate(overrides);
 		obj.guilty = true;
+
+		if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
+			obj.seed += i * 7;
+		}
+		
 		waiting.push(obj);
 	}
 
