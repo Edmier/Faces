@@ -158,6 +158,14 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 			person: waiting.seed,
 			timestamp: Date.now(),
 		});
+	} else {
+		choices.push({
+			choice: 'admit',
+			coinChange: 0,
+			warranted: false,
+			person: 'error',
+			timestamp: Date.now(),
+		})	
 	}
 
 	// console.log(choices.length, lobby.data.waiting.length, choices.length >= lobby.data.waiting.length);
