@@ -1,7 +1,6 @@
-import { PB_ADMIN_EMAIL, PB_ADMIN_PASSWORD, POCKETBASE_URL } from '$env/static/private';
 import { CreateLobbyState } from '$lib/game';
 import type { Face } from 'facesjs';
-import PocketBase from 'pocketbase';
+import type PocketBase from 'pocketbase';
 
 export async function GetLobby(pb: PocketBase, lobbyId: string) {
 	try {

@@ -159,6 +159,7 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 			timestamp: Date.now(),
 		});
 	} else {
+		console.log('Error: Duplicate choice!', choice, waiting.seed);
 		choices.push({
 			choice: 'admit',
 			coinChange: 0,

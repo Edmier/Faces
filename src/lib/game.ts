@@ -39,13 +39,14 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 		wanted.push(obj);
 	}
 
-	for (let i = 0; i < INITIAL_WAITING; i++) {
+	for (let i = INITIAL_WANTED; i < INITIAL_WAITING + INITIAL_WANTED; i++) {
 		const obj = gen.waiting(i);
 		const gender = (i % 2 === 0) ? 'male' : 'female';
 		obj.face = generate(undefined, { gender,  });
 
 		if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
 			obj.seed += i * 7;
+			console.log('Duplicate seed');
 		}
 
 		waiting.push(obj);
@@ -74,10 +75,10 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 		obj.face = generate(overrides);
 		obj.guilty = true;
 
-		if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
-			obj.seed += i * 7;
-		}
-		
+		// if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
+		// 	obj.seed += i * 7;
+		// }
+
 		waiting.push(obj);
 	}
 
