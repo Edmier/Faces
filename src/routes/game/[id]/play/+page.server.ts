@@ -1,6 +1,7 @@
 import { error, type Actions, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { GetLobby, type Game, type Lobby, type User, GetGame, type Choice, type GameData } from '$pb/pocketbase';
+import type PocketBase from 'pocketbase';
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
 	const { lobby } = await parent();
@@ -52,7 +53,9 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	game = await GetGame(locals.pb, user.game);
 	if (game) {
 		if (game.status === 'finished') {
-			collectData(game.choices);
+			if (!game.data) {
+				await collectData(locals.pb, user.game, game.choices);
+			}
 			throw redirect(303, `/game/${lobby.lobbyId}/results`);
 		}
 
@@ -172,6 +175,10 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 	// console.log(choices.length, lobby.data.waiting.length, choices.length >= lobby.data.waiting.length);
 	const done = choices.length >= lobby.data.waiting.length - 1;
 
+	if (done && !game.data) {
+		await collectData(locals.pb, game.id, choices);
+	}
+
 	try {
 		// console.log('coins', waiting.netCoins, game.coins);
 		await locals.pb.collection('games').update<Game>(game.id, {
@@ -191,7 +198,7 @@ async function handleChoice(locals: App.Locals, params: Partial<Record<string, s
 	}
 }
 
-async function collectData(choices: Choice[]): Promise<GameData> {
+async function collectData(pb: PocketBase, gameId: string, choices: Choice[]) {
 	const data: GameData = {
 		deny: 0,
 		admit: 0,
@@ -213,11 +220,16 @@ async function collectData(choices: Choice[]): Promise<GameData> {
 			if (choice.choice === 'report' || choice.choice === 'deny') {
 				data.blockedWanted.push(choice.person);
 			}
-		} else {
-			data[choice.choice]++;
 		}
+
+		data[choice.choice]++;
 	}
 
-	console.log(data);
-	return data;
+	try {
+		await pb.collection('games').update<Game>(gameId, {
+			data: data,
+		});
+	} catch (e) {
+		console.log(e);
+	}
 }

@@ -9,10 +9,24 @@ export const load = (async ({ parent, locals }) => {
 		throw error(404, "Lobby not found");
 	}
 
-	const games = await locals.pb.collection('games').getList<Game>(0, 500, {
-		lobbyId: lobby.id
+	let games: Game[] = [];
+	try {
+		const result = await locals.pb.collection("games").getList<Game>(0, 500, {
+			lobbyId: lobby.id
+		});
+
+		games = result.items;
+	} catch (e) {
+		throw error(500, "Could not load games!");
+	}
+
+	const results = games.map((game) => {
+		return game.data;
+	}).filter((data) => {
+		return data !== null;
 	});
 
-	console.log(games);
-
+	return {
+		results
+	};
 }) satisfies PageServerLoad;

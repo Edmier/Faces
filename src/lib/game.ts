@@ -43,6 +43,7 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 		const obj = gen.waiting(i);
 		const gender = (i % 2 === 0) ? 'male' : 'female';
 		obj.face = generate(undefined, { gender,  });
+		obj.guilty = false;
 
 		if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
 			obj.seed += i * 7;
@@ -74,6 +75,7 @@ export function InitialGameState(lobby: Lobby): LobbyData {
 
 		obj.face = generate(overrides);
 		obj.guilty = true;
+		obj.seed = wanted[i].seed;
 
 		// if (wanted.some(w => w.seed === obj.seed) || waiting.some(w => w.seed === obj.seed)) {
 		// 	obj.seed += i * 7;
